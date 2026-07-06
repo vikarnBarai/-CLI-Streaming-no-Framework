@@ -1,28 +1,17 @@
 import os
 from dotenv import load_dotenv
-from anthropic import AsyncAnthropic
+from ChatBot.API import ChatBot_API
 import asyncio
 load_dotenv()
-clinet = AsyncAnthropic()
-
-async def message_send() -> None:
-    async with clinet.messages.stream(
-        max_tokens = 1024,
-        messages=[
-        {
-            "role": "user",
-            "content": "Hello, Claude",
-        }
-    ],
-    model="claude-opus-4-8",
-    )as stream:
-        async for text in stream.text_stream:
-            print(text, end= "", flush= True)
-        print()
-
-        
+messages = []
+api = ChatBot_API()
+  
     
+def main():
+    while True:
+        user_input = input(">") 
+        api.add_user_message(message = messages, text = user_input)
+        final_msg = asyncio.run(api.chatbot_msg(messages))
+        api.add_assistant_message(messages,final_msg)
 
-asyncio.run(message_send())
-    
-
+main()
